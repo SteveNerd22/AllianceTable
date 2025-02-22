@@ -1,14 +1,20 @@
 package io.alliancetable.main.screens;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import io.alliancetable.main.Main;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GenericScreen implements Screen {
 
     protected Main myGame;
-    protected FitViewport viewport;
+    protected List<Viewport> viewports;
+    protected SpriteBatch batch;
     protected int lastWindowWidth;
     protected int lastWindowHeight;
     protected int worldWidth = Main.WORLD_WIDTH;
@@ -19,7 +25,8 @@ public abstract class GenericScreen implements Screen {
 
     public GenericScreen(Main game) {
         this.myGame = game;
-        viewport = game.viewport;
+        this.viewports = new ArrayList<Viewport>();
+        this.batch = game.batch;
     }
 
     @Override
@@ -36,7 +43,9 @@ public abstract class GenericScreen implements Screen {
             lastWindowWidth = width;
             lastWindowHeight = height;
         }
-        myGame.viewport.update(width, height, true);
+        for(Viewport viewport : viewports) {
+            viewport.update(windowWidth, windowHeight, true);
+        }
     }
 
     @Override
@@ -83,34 +92,6 @@ public abstract class GenericScreen implements Screen {
                 toggleFullscreen();
                 return true; // Evento gestito
             }
-            if(keycode == Input.Keys.C) {
-                if(Gdx.graphics.getWidth() == 1280) {
-                    Gdx.graphics.setWindowedMode(400, 180);
-                    myGame.viewport.update(400, 180, true);
-                    myGame.viewport.setWorldSize(Main.WORLD_WIDTH, Main.WORLD_HEIGHT);
-                }
-                else if(Gdx.graphics.getWidth() == 400) {
-                    Gdx.graphics.setWindowedMode(600, 400);
-                    myGame.viewport.update(600, 400, true);
-                    myGame.viewport.setWorldSize(Main.WORLD_WIDTH, Main.WORLD_HEIGHT);
-                } else if(Gdx.graphics.getWidth() == 600) {
-                    Gdx.graphics.setWindowedMode(800, 600);
-                    myGame.viewport.update(800, 600, true);
-                    myGame.viewport.setWorldSize(Main.WORLD_WIDTH, Main.WORLD_HEIGHT);
-                } else  {
-                    Gdx.graphics.setWindowedMode(1280, 720);
-                    myGame.viewport.update(1280, 720, true);
-                    myGame.viewport.setWorldSize(Main.WORLD_WIDTH, Main.WORLD_HEIGHT);
-                }
-
-                return true;
-            }
-            if(keycode == Input.Keys.X){
-                System.out.println("Gdx:      " + Gdx.graphics.getWidth()+"x"+Gdx.graphics.getHeight());
-                System.out.println("Viewport: "+ myGame.viewport.getScreenWidth());
-                System.out.println("world:    "+ myGame.viewport.getWorldWidth());
-            }
-
             return false; // Evento non gestito
         }
     }

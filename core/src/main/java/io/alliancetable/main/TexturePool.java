@@ -19,18 +19,22 @@ public class TexturePool {
 
     private final LinkedHashMap<String, TextureInfo> textures;
 
-    public TexturePool(long maxMemoryMegaBytes) {
+    public TexturePool(long maxMemoryMegaBytes, boolean autofill) {
         if(maxMemoryMegaBytes > MAX_MEMORY)
             maxMemoryBytes = MAX_MEMORY;
         else
             this.maxMemoryBytes = maxMemoryMegaBytes * 1024 * 1024;
         this.actualMemoryBytes = 0;
         this.textures = new LinkedHashMap<>(16, 0.75f, true);
-        fillPool();
+        if(autofill)
+            fillPool();
     }
 
-    public void addTexture(String textureId) {
-        FileHandle file = Gdx.files.internal(textureId);
+    public TexturePool(long maxMemoryMegaBytes) {
+        this(maxMemoryMegaBytes, true);
+    }
+
+    public void addTexture(String textureId, FileHandle file) {
         long textureSizeBytes = file.length();
 
         if (actualMemoryBytes + textureSizeBytes > maxMemoryBytes) {
@@ -42,6 +46,11 @@ public class TexturePool {
         textures.put(textureId, new TextureInfo(texture, textureSizeBytes));
 
         actualMemoryBytes += textureSizeBytes;
+    }
+
+    public void addTexture(String textureId) {
+        FileHandle file = Gdx.files.internal(textureId);
+        addTexture(textureId, file);
     }
 
     public Texture getTexture(String textureId) {
