@@ -1,17 +1,13 @@
 package io.alliancetable.main;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class Network {
@@ -74,7 +70,7 @@ public class Network {
         return null;
     }
 
-    public FileHandle getFile(String urlString, String fileName) {
+    public ByteBuffer getFile(String urlString) {
         HttpURLConnection connection = null;
         BufferedInputStream bis = null;
         FileOutputStream fos = null;
@@ -90,18 +86,18 @@ public class Network {
             if(responseCode == HttpURLConnection.HTTP_OK) {
                 // Leggiamo il contenuto
                 bis = new BufferedInputStream(connection.getInputStream());
-
-                // Creiamo un FileHandle in LibGDX, ad esempio in una cartella "data" locale
-                FileHandle fileHandle = Gdx.files.local(fileName);
-                fos = new FileOutputStream(fileHandle.file());
-
+                // Leggiamo lo stream in un buffer dinamico
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = bis.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
+                    baos.write(buffer, 0, bytesRead);
                 }
-                fos.flush();
-                return fileHandle;
+                byte[] data = baos.toByteArray();
+                ByteBuffer directBuffer = ByteBuffer.allocateDirect(data.length);
+                directBuffer.put(data);
+                directBuffer.flip();
+                return directBuffer;
             } else {
                 System.err.println("GET request fallita: " + responseCode);
             }

@@ -2,10 +2,12 @@ package io.alliancetable.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,6 +53,16 @@ public class TexturePool {
     public void addTexture(String textureId) {
         FileHandle file = Gdx.files.internal(textureId);
         addTexture(textureId, file);
+    }
+
+    public void addTexture(String textureId, ByteBuffer buffer) {
+        Pixmap pixmap = new Pixmap(buffer);
+        if(actualMemoryBytes + buffer.capacity() > maxMemoryBytes) {
+            freeMemory(buffer.capacity());
+        }
+        Texture texture = new Texture(pixmap);
+        textures.put(textureId, new TextureInfo(texture, buffer.capacity()));
+        actualMemoryBytes += buffer.capacity();
     }
 
     public Texture getTexture(String textureId) {
