@@ -18,6 +18,7 @@ public class TexturePool {
     private final long MAX_MEMORY = Runtime.getRuntime().maxMemory() * 2 / 3;
     private long maxMemoryBytes;
     private long actualMemoryBytes;
+    private static final Texture fallbackTexture = new Texture(Gdx.files.internal("fallback.png"));
 
     private final LinkedHashMap<String, TextureInfo> textures;
 
@@ -69,7 +70,7 @@ public class TexturePool {
         if (textures.containsKey(textureId)) {
             return textures.get(textureId).texture;
         }
-        return null;
+        return fallbackTexture;
     }
 
     public void resizePool(long newMaxMemoryMegaBytes) {

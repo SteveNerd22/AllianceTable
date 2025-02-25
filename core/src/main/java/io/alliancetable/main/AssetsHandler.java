@@ -1,5 +1,8 @@
 package io.alliancetable.main;
 
+import com.badlogic.gdx.graphics.Texture;
+
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class AssetsHandler {
@@ -14,11 +17,17 @@ public class AssetsHandler {
         hostPool = new TexturePool(100, false);
 
         List<DirectoryItem> items = game.network.getPublicDir();
-        for (DirectoryItem item : items) {
-            if(item.getType().equals("cartella") && item.getName().equals("images")) {
-                for(DirectoryItem image : item.getContents()) {
-                    if(!image.getType().equals("cartella"))
-                        hostPool.addTexture(image.getName(), game.network.getFile("images/"+image.getName()));
+        if(items != null) {
+            for (DirectoryItem item : items) {
+                if (item.getType().equals("cartella") && item.getName().equals("images")) {
+                    for (DirectoryItem image : item.getContents()) {
+                        if (!image.getType().equals("cartella")) {
+                            ByteBuffer b = game.network.getFile("images/" + image.getName());
+                            if (b != null) {
+                                hostPool.addTexture(image.getName(), b);
+                            }
+                        }
+                    }
                 }
             }
         }

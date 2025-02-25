@@ -3,11 +3,9 @@ package io.alliancetable.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import io.alliancetable.main.screens.MainMenu;
+import io.alliancetable.main.screens.MainScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -29,7 +27,7 @@ public class Main extends Game {
         network = new Network();
         assetsHandler = new AssetsHandler(this);
         Gdx.input.setInputProcessor(inputMultiplexer);
-        setScreen(new MainMenu(this));
+        setScreen(new MainScreen(this));
     }
 
     @Override

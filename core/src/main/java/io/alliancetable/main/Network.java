@@ -1,5 +1,6 @@
 package io.alliancetable.main;
 
+import com.badlogic.gdx.utils.Null;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -70,6 +71,7 @@ public class Network {
         return null;
     }
 
+    @Null
     public ByteBuffer getFile(String urlString) {
         HttpURLConnection connection = null;
         BufferedInputStream bis = null;
@@ -147,7 +149,7 @@ public class Network {
                 System.err.println("GET request fallita: " + responseCode);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("impossibile stabilire una connessione con l'host");;
         } finally {
             try {
                 if (reader != null)

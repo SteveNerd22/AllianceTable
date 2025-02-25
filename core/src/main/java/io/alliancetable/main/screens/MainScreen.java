@@ -3,21 +3,26 @@ package io.alliancetable.main.screens;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.alliancetable.main.Main;
+import io.alliancetable.main.scenes.UI;
 
-public class MainMenu extends GenericScreen {
+public class MainScreen extends GenericScreen {
 
-    private ExtendViewport viewport;
+    private ScreenViewport viewport;
     private OrthographicCamera camera;
     private Texture background;
+    private UI ui;
 
-    public MainMenu(Main game) {
+    public MainScreen(Main game) {
         super(game);
         background = game.assetsHandler.hostPool.getTexture("logo.png");
+        ui = new UI(batch);
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(worldWidth, worldHeight, camera);
+        viewport = new ScreenViewport(camera);
         viewports.add(viewport);
+        viewports.add(ui.viewport);
+        game.inputMultiplexer.addProcessor(ui.stage);
     }
 
     @Override
@@ -33,6 +38,9 @@ public class MainMenu extends GenericScreen {
         batch.begin();
         batch.draw(background, 0, 0);
         batch.end();
+        batch.setProjectionMatrix(ui.stage.getViewport().getCamera().combined);
+        ui.stage.act(delta);
+        ui.stage.draw();
     }
 }
 
